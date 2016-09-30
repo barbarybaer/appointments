@@ -5,7 +5,7 @@ class Appointments extends CI_Controller {
 public function __construct()
 	{
 		parent::__construct();
-		$this->output->enable_profiler();
+		//$this->output->enable_profiler();
 		date_default_timezone_set ( 'America/Los_Angeles' );
 
 	}
@@ -30,9 +30,8 @@ public function __construct()
 		$this->form_validation->set_rules("apptTime", "Time", "trim|required");
 
 		if($this->form_validation->run() === FALSE )
-		{	//echo "validation errs"; die();
+		{	
 		    $this->session->set_flashdata("addAppt_errors", validation_errors());
-			// redirect('Appointments/add', $dateErrors);
 			redirect('appointments');
 			return;
 		}
@@ -42,8 +41,6 @@ public function __construct()
 		}
 		else
 		{	
-			
-			//echo "loading appt"; die();
 			$this->load->model("Appointment");
 			$apptDateTime = date_create($this->input->post('apptDate') . $this->input->post('apptTime'));
 			$conflicts['conflicts'] = ($this->Appointment->checkConflicts($this->session->userdata['currentUser']['id'], date_format($apptDateTime, "Y/m/d H:i")));
@@ -71,22 +68,21 @@ public function __construct()
 		$this->form_validation->set_rules("apptTime", "Time", "trim|required");
 
 		if($this->form_validation->run() === FALSE)
-		{	//echo "validation errs"; die();
+		{	
 		    $this->session->set_flashdata("updateAppt_errors", validation_errors());
-			// redirect('Appointments/add', $dateErrors);
+			
 			$this->updateAppointment($apptID, strtotime(date_format($apptDateTime, "Y/m/d H:iP")));
-			// redirect('/update',$apptID);
+			
 			return;
 		}
 		$dateErrors = $this->validateDatesTimes();
 		if ($dateErrors) {
 			$this->updateAppointmentPage($apptID);
-			//redirect('update',$apptID);
+			
 			
 		}
 
 		else {
-			//var_dump($this->input->post());die();
 			$this->load->model("Appointment");
 			$apptDateTime = date_create($this->input->post('apptDate') . $this->input->post('apptTime'));
 			
@@ -117,8 +113,6 @@ public function __construct()
 		
 		$apptDateTime = date_create($this->input->post('apptDate') . $this->input->post('apptTime'));
 		$inputTime = strtotime(date_format($apptDateTime, "Y/m/d H:iP"));
-		//var_dump($inputTime);
-		//var_dump($today);
 		$dateErrors = "";
 		if ($inputTime < $today){
 			echo "invalid date"; 

@@ -1,7 +1,6 @@
 <?php
 class Appointment extends CI_Model{
 	function getTodaysAppointments($userID) {
-         // $sql = "SELECT * FROM travel_plans WHERE created_by = ?";
         $sql = "select a.user_id, a.id 'appt_id', date_format(appt_date, '%H:%i') 'appt_time', a.tasks, s.status from appointments a join status s on s.id = a.status where date(appt_Date) = curdate() and user_id = ? order by appt_date asc" ;
         $vals = [$userID];
         return $this->db->query($sql,$vals)->result_array(); 
@@ -13,15 +12,13 @@ class Appointment extends CI_Model{
     }
 
     function checkConflicts($userID, $apptDateTime) {
-        //var_dump($apptDateTime); die();
         $sql = "select id from appointments where user_id = ? and appt_date between ? and date_add(?, interval 1 minute)" ;
         $vals = [$userID, $apptDateTime, $apptDateTime];
         return $this->db->query($sql,$vals)->result_array();     
     }
 
 	function addAppointment($apptInfo, $userID) {
-
-        $sql = "insert into appointments (user_id, appt_date, tasks, status, created_at,updated_at) values (?,?,?,?,now(),now())";
+       $sql = "insert into appointments (user_id, appt_date, tasks, status, created_at,updated_at) values (?,?,?,?,now(),now())";
         
         $apptDateTime = date_create($apptInfo['apptDate'] . $apptInfo['apptTime']);
         $vals = [$userID, date_format($apptDateTime, "Y/m/d H:iP"), $apptInfo['tasks'], 1];
